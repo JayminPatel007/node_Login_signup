@@ -1,13 +1,89 @@
 const User = require("../models/user");
+const mongoose= require("mongoose");
+const jwt = require("jsonwebtoken");
+const secret = "secret"
+
 
 module.exports.postLogin = (req, res, next)=>{
-    res.send("LogIn");
+    User.find({email: req.body.email}).then(data=>{
+        if(data.length == 0){
+            res.status(404).json({
+                error: {
+                    massage: "User is not registered with this email"
+                }
+            })
+        } else{
+            console.log(data[0].email, data[0].password)
+            if (data[0].password == req.body.password){
+                const token = jwt.sign({
+                    email: data[0].email,
+                    userid: data[0]._id
+                }, secret, {
+                    expiresIn: "1h"
+                })
+                res.status(200).json({
+                    massage: "Logged in",
+                    token: token
+                })
+            } else{
+                res.status(417).json({
+                    error : {
+                        massage: "Auth Fail"
+                    }
+                })
+            }
+        }
+    }).catch(err=>{
+        console.log(err);
+    });
 }
 
 module.exports.postSignUp = (req, res, next)=>{
-    res.send("SignUP");
+    User.find({email: req.body.email}).then(data=>{
+        if (data.length>0){
+            res.status(409).json({
+                error:{
+                    massage: "email is already registered with this e-mail."
+                }
+                
+            })
+        } else{
+            const user = new User({
+                _id: new mongoose.Types.ObjectId,
+                name: req.body.name,
+                email: req.body.email,
+                gender: req.body.gender,
+                birthDate: req.body.birthDate,
+                address: req.body.address,
+                password: req.body.password
+            });
+            user.save().then(data =>{
+                res.status(201).json({
+                    massage: "User Created",
+                });
+            }
+            ).catch(err=>{
+                console.log(err)
+                res.status(500).json({
+                    err : {
+                        massage: "Internal server error"
+                    }
+                })
+            })
+        }
+    })
+    
+    
 }
 
 module.exports.getAllUsers = (req, res, next)=>{
-    res.send("Users");
+    User.find().then(data=>{
+        res.status(200).json(data)
+    }).catch(err=>{
+        res.send(500).json({
+            err: {
+                massage: "Internal Server Error!"
+            }
+        })
+    })
 }
