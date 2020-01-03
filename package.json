@@ -1,0 +1,16 @@
+{
+  "name": "node_signup_login",
+  "version": "1.0.0",
+  "description": "Node API for Login and SignUp",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "node app.js"
+  },
+  "author": "Jaymin Patel",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongodb": "^3.4.1"
+  }
+}
