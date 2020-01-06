@@ -1,10 +1,17 @@
 const User = require("../models/user");
 const mongoose= require("mongoose");
 const jwt = require("jsonwebtoken");
+const {validationResult} = require("express-validator");
 const secret = "secret"
 
 
 module.exports.postLogin = (req, res, next)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty){
+        return res.status(422).json({error: {
+            massage: "Validation Error"
+        }})
+    }
     User.find({email: req.body.email}).then(data=>{
         if(data.length == 0){
             res.status(404).json({
@@ -39,6 +46,12 @@ module.exports.postLogin = (req, res, next)=>{
 }
 
 module.exports.postSignUp = (req, res, next)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty){
+        return res.status(422).json({error: {
+            massage: "Validation Error"
+        }})
+    }
     User.find({email: req.body.email}).then(data=>{
         if (data.length>0){
             res.status(409).json({
@@ -65,7 +78,7 @@ module.exports.postSignUp = (req, res, next)=>{
             ).catch(err=>{
                 console.log(err)
                 res.status(500).json({
-                    err : {
+                    error : {
                         massage: "Internal server error"
                     }
                 })
@@ -81,7 +94,7 @@ module.exports.getAllUsers = (req, res, next)=>{
         res.status(200).json(data)
     }).catch(err=>{
         res.send(500).json({
-            err: {
+            error: {
                 massage: "Internal Server Error!"
             }
         })
