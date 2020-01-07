@@ -23,12 +23,15 @@ app.use(BodyParser.urlencoded({extended: false}));
 app.use(BodyParser.json())
 app.use(morgan('dev'));
 
+app.post("/login",[check('email').isEmail(), check('password').isLength({min: 1})], adminController.postLogin);
 
-app.post("/login",[check('email').isEmail(), check('password').isLength({min: 5})], adminController.postLogin);
+app.post("/signup",[check('email').isEmail(), check('name').isLength({min:1}), check('password').isLength({min: 1})], adminController.postSignUp);
 
-app.post("/signup",[check('email').isEmail(), check('name').isLength({min:2}), check('password').isLength({min: 5})], adminController.postSignUp);
+app.post("/users/:id", adminController.postEditUser);
 
-app.use("/users", checkAuth, adminController.getAllUsers);
+app.delete("/users/:id", adminController.deleteUser);
+
+app.get("/users", checkAuth, adminController.getAllUsers);
 
 app.use((req, res, next)=>{
     const error = new Error();
@@ -49,8 +52,10 @@ app.use((error, req, res, next)=>{
 mongoose.connect('mongodb+srv://admin:admin@cluster0-jlrzq.mongodb.net/test?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true
+}, ()=>{
+    console.log("Connected to database!")
 });
 
-app.listen(8000, (req,res)=>{
-    console.log("App is listning at port 8000");
+app.listen(5000, (req,res)=>{
+    console.log("App is listning at port 5000");
 });

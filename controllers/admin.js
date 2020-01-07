@@ -7,11 +7,14 @@ const secret = "secret"
 
 module.exports.postLogin = (req, res, next)=>{
     const errors = validationResult(req);
-    if (!errors.isEmpty){
+    console.log(errors)
+    if (!errors.isEmpty()){
         return res.status(422).json({error: {
-            massage: "Validation Error"
+            massage: "Back-End Validation Error"
         }})
     }
+    console.log(typeof(errors))
+    console.log(errors)
     User.find({email: req.body.email}).then(data=>{
         if(data.length == 0){
             res.status(404).json({
@@ -47,16 +50,17 @@ module.exports.postLogin = (req, res, next)=>{
 
 module.exports.postSignUp = (req, res, next)=>{
     const errors = validationResult(req);
-    if (!errors.isEmpty){
+    console.log(typeof(errors))
+    if (!errors.isEmpty()){
         return res.status(422).json({error: {
-            massage: "Validation Error"
+            massage: "Back-end Validation Error"
         }})
     }
     User.find({email: req.body.email}).then(data=>{
         if (data.length>0){
             res.status(409).json({
                 error:{
-                    massage: "email is already registered with this e-mail."
+                    massage: "User is already registered with this e-mail."
                 }
                 
             })
@@ -99,4 +103,13 @@ module.exports.getAllUsers = (req, res, next)=>{
             }
         })
     })
+}
+
+module.exports.postEditUser = (req, res, next)=>{
+    const userid = req.params.id;
+    console.log(userid)
+}
+
+module.exports.deleteUser = (req, res, next)=>{
+    //TODO : Delete User Controller
 }
