@@ -27,11 +27,11 @@ app.post("/login",[check('email').isEmail(), check('password').isLength({min: 1}
 
 app.post("/signup",[check('email').isEmail(), check('name').isLength({min:1}), check('password').isLength({min: 1})], adminController.postSignUp);
 
-app.post("/users/:id", adminController.postEditUser);
+app.put("/users/:id",checkAuth, [check('name').isLength({min:1}), check('password').isLength({min: 1})], adminController.postEditUser);
 
-app.delete("/users/:id", adminController.deleteUser);
+app.delete("/users/:id",checkAuth, adminController.deleteUser);
 
-app.get("/users", checkAuth, adminController.getAllUsers);
+app.get("/users",checkAuth, adminController.getAllUsers);
 
 app.use((req, res, next)=>{
     const error = new Error();
