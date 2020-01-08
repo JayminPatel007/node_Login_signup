@@ -56,6 +56,6 @@ mongoose.connect('mongodb+srv://admin:admin@cluster0-jlrzq.mongodb.net/test?retr
     console.log("Connected to database!")
 });
 
-app.listen(5000, (req,res)=>{
-    console.log("App is listning at port 5000");
+app.listen(8000, (req,res)=>{
+    console.log("App is listning at port 8000");
 });
