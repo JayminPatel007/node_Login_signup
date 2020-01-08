@@ -13,7 +13,7 @@ app.use((req, res, next)=>{
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept")
     if (req.method === "OPTIONS"){
-        res.header("Access-Control-Allow-Methods", "POST, GET")
+        res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH")
         return res.status(200).json({})
     }
     next()
@@ -29,9 +29,11 @@ app.post("/signup",[check('email').isEmail(), check('name').isLength({min:1}), c
 
 app.put("/users/:id",checkAuth, [check('name').isLength({min:1}), check('password').isLength({min: 1})], adminController.postEditUser);
 
+app.get("/users/:id", checkAuth, adminController.getUserByIdController)
+
 app.delete("/users/:id",checkAuth, adminController.deleteUser);
 
-app.get("/users",checkAuth, adminController.getAllUsers);
+app.get("/users", adminController.getAllUsers);
 
 app.use((req, res, next)=>{
     const error = new Error();

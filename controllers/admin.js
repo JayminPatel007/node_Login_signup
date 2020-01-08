@@ -2,6 +2,8 @@ const User = require("../models/user");
 const mongoose= require("mongoose");
 const jwt = require("jsonwebtoken");
 const {validationResult} = require("express-validator");
+
+
 const secret = "secret"
 
 
@@ -94,7 +96,12 @@ module.exports.postSignUp = (req, res, next)=>{
 }
 
 module.exports.getAllUsers = (req, res, next)=>{
-    User.find().then(data=>{
+    const {page} = req.query;
+    const options = {
+        page: parseInt(page, 10),
+        limit: parseInt(10, 10)
+    }
+    User.paginate({}, options).then(data=>{
         res.status(200).json(data)
     }).catch(err=>{
         res.send(500).json({
@@ -106,6 +113,7 @@ module.exports.getAllUsers = (req, res, next)=>{
 }
 
 module.exports.postEditUser = (req, res, next)=>{
+    console.log(req.body)
     const errors = validationResult(req);
     console.log(typeof(errors))
     if (!errors.isEmpty()){
@@ -145,6 +153,20 @@ module.exports.deleteUser = (req, res, next)=>{
         res.status(500).json({
             error : {
                 massage: "Internal Server Error!"
+            }
+        })
+    })
+}
+
+module.exports.getUserByIdController = (req, res, next)=>{
+    const userid =req.params.id;
+    console.log(userid)
+    User.findById(userid).exec().then(data=>{
+        res.status(200).json(data)
+    }).catch(err=>{
+        res.status(500).json({
+            error: {
+                massage: "Internal Server Error"
             }
         })
     })
