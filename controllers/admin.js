@@ -96,20 +96,36 @@ module.exports.postSignUp = (req, res, next)=>{
 }
 
 module.exports.getAllUsers = (req, res, next)=>{
-    const {page} = req.query;
-    const options = {
-        page: parseInt(page, 10),
-        limit: parseInt(10, 10)
-    }
-    User.paginate({}, options).then(data=>{
-        res.status(200).json(data)
-    }).catch(err=>{
-        res.send(500).json({
-            error: {
-                massage: "Internal Server Error!"
-            }
+    const {page, query} = req.query;
+    if (query){
+        const options = {
+            page: parseInt(page, 10),
+            limit: parseInt(10, 10)
+        }
+        User.paginate({ $or: [{name: { $regex: '.*' + query + '.*' }}, {email: { $regex: '.*' + query + '.*' }}] }, options).then(data=>{
+            res.status(200).json(data)
+        }).catch(err=>{
+            res.send(500).json({
+                error: {
+                    massage: "Internal Server Error!"
+                }
+            })
         })
-    })
+    }else{
+        const options = {
+            page: parseInt(page, 10),
+            limit: parseInt(10, 10)
+        }
+        User.paginate({}, options).then(data=>{
+            res.status(200).json(data)
+        }).catch(err=>{
+            res.send(500).json({
+                error: {
+                    massage: "Internal Server Error!"
+                }
+            })
+        })
+    }
 }
 
 module.exports.postEditUser = (req, res, next)=>{
