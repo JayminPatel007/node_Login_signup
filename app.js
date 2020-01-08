@@ -33,7 +33,7 @@ app.get("/users/:id", checkAuth, adminController.getUserByIdController)
 
 app.delete("/users/:id",checkAuth, adminController.deleteUser);
 
-app.get("/users", adminController.getAllUsers);
+app.get("/users",checkAuth, adminController.getAllUsers);
 
 app.use((req, res, next)=>{
     const error = new Error();
